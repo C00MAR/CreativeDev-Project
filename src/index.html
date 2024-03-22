@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./public/favicon.ico">
+    <title>JS Canvas Project</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Bouncing bubbles</h1>
+        <canvas id="canvas-bubbles" class="bubbles"></canvas>
+    </div>
+    <script type="module" src="./main.js"></script>
+</body>
+<style>
+    h1 {
+        text-align: center;
+        text-transform: uppercase;
+        font-family: Arial, Helvetica, sans-serif;
+        font-style: italic;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .bubbles {
+        width: 50vw;
+        height: 80vh;
+        border: solid;
+    }
+</style>
+
+</html>
