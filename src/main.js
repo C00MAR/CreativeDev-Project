@@ -16,12 +16,8 @@ function getTime() {
     const hours = currentTime.getHours();
     const minutes = currentTime.getMinutes();
     const timeArray = [hours, minutes];
-    const hourTens = Math.floor(timeArray[0] / 10);
-    const hourUnits = timeArray[0] % 10;
-    const minuteTens = Math.floor(timeArray[1] / 10);
-    const minuteUnits = timeArray[1] % 10;
-    const timeDigits = [hourTens, hourUnits, ':', minuteTens, minuteUnits];
-
+    const timeDigits = timeArray.flatMap(digit => digit < 10 ? [0, digit] : digit.toString().split('').map(Number));
+    timeDigits.splice(2, 0, ':');
     return timeDigits;
 }
 
@@ -38,17 +34,16 @@ function GetPosition(size) {
         coordinates.push({ x: (size.ecartTypeWidth * n) + (size.widthOfDigit * i), y: size.ecartTypeHeight });
     }
 
-    return coordinates
+    return coordinates;
 }
 
 function GetSizeOfDigit() {
-    let size = {};
     const widthOfDigit = canvas.width * 0.15;
     const ecartTypeWidth = (canvas.width - widthOfDigit * 5) / 6;
     const heightOfDigit = canvas.height * 0.8;
     const ecartTypeHeight = (canvas.height - heightOfDigit) / 2;
 
-    return size = { widthOfDigit, ecartTypeWidth, heightOfDigit, ecartTypeHeight }
+    return { widthOfDigit, ecartTypeWidth, heightOfDigit, ecartTypeHeight };
 }
 
 function drawDigit(bubbles, digit, i, coo, sizeOfDigit) {
@@ -67,33 +62,15 @@ function drawDigit(bubbles, digit, i, coo, sizeOfDigit) {
             bubble.draw(ctx);
             
             if (k === 0.5 && (digit === 2 || digit === 3 || digit === 4 || digit === 5 || digit === 6 || digit === 8 || digit === 9)) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(bubble.x, bubble.y);
-                ctx.lineTo(bubble.x + sizeOfDigit.widthOfDigit, bubble.y);
-                ctx.stroke();
-                ctx.closePath();
-                ctx.restore();
+                drawLine(bubble.x, bubble.y, bubble.x + sizeOfDigit.widthOfDigit, bubble.y);
             }
 
             if (k === 0.5 && (digit === 0 || digit === 4 || digit === 5 || digit === 6 || digit === 8 || digit === 9)) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(bubble.x, bubble.y);
-                ctx.lineTo(bubble.x, bubble.y - sizeOfDigit.heightOfDigit / 2);
-                ctx.stroke();
-                ctx.closePath();
-                ctx.restore();
+                drawLine(bubble.x, bubble.y, bubble.x, bubble.y - sizeOfDigit.heightOfDigit / 2);
             }
 
             if (k === 0.5 && (digit === 0 || digit === 2 || digit === 6 || digit === 8)) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(bubble.x, bubble.y);
-                ctx.lineTo(bubble.x, bubble.y + sizeOfDigit.heightOfDigit / 2);
-                ctx.stroke();
-                ctx.closePath();
-                ctx.restore();
+                drawLine(bubble.x, bubble.y, bubble.x, bubble.y + sizeOfDigit.heightOfDigit / 2);
             }
 
             for (let l = 0; l < 2; l++) {
@@ -101,47 +78,33 @@ function drawDigit(bubbles, digit, i, coo, sizeOfDigit) {
                 bubble.draw(ctx);
 
                 if (l === 1 && k === 0 && (digit === 0 || digit === 2 || digit === 3 || digit === 5 || digit === 6 || digit === 7 || digit === 8 || digit === 9)) {
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(bubble.x, bubble.y);
-                    ctx.lineTo(bubble.x - sizeOfDigit.widthOfDigit, bubble.y);
-                    ctx.stroke();
-                    ctx.closePath();
-                    ctx.restore();
+                    drawLine(bubble.x, bubble.y, bubble.x - sizeOfDigit.widthOfDigit, bubble.y);
                 }
 
                 if (l === 1 && k === 0 && (digit === 0 || digit === 1 || digit === 2 || digit === 3 || digit === 4 || digit === 7 || digit === 8 || digit === 9)) {
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(bubble.x, bubble.y);
-                    ctx.lineTo(bubble.x, bubble.y + sizeOfDigit.heightOfDigit / 2);
-                    ctx.stroke();
-                    ctx.closePath();
-                    ctx.restore();
+                    drawLine(bubble.x, bubble.y, bubble.x, bubble.y + sizeOfDigit.heightOfDigit / 2);
                 }
 
                 if (l === 1 && k === 1 && (digit === 0 || digit === 2 || digit === 3 || digit === 5 || digit === 6 || digit === 8 || digit === 9)) {
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(bubble.x, bubble.y);
-                    ctx.lineTo(bubble.x - sizeOfDigit.widthOfDigit, bubble.y);
-                    ctx.stroke();
-                    ctx.closePath();
-                    ctx.restore();
+                    drawLine(bubble.x, bubble.y, bubble.x - sizeOfDigit.widthOfDigit, bubble.y);
                 }
 
                 if (l === 1 && k === 1 && (digit === 0 || digit === 1 || digit === 3 || digit === 4 || digit === 5 || digit === 6 || digit === 7 || digit === 8 || digit === 9)) {
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(bubble.x, bubble.y);
-                    ctx.lineTo(bubble.x, bubble.y - sizeOfDigit.heightOfDigit / 2);
-                    ctx.stroke();
-                    ctx.closePath();
-                    ctx.restore();
+                    drawLine(bubble.x, bubble.y, bubble.x, bubble.y - sizeOfDigit.heightOfDigit / 2);
                 }
             }
         }
     }
+}
+
+function drawLine(x1, y1, x2, y2) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.restore();
 }
 
 function timeCall(bubbles) {
@@ -149,9 +112,9 @@ function timeCall(bubbles) {
     const sizeOfDigit = GetSizeOfDigit();
     const startDigitAt = GetPosition(sizeOfDigit);
 
-    for (let i = 0; i < timeDigits.length; i++) {
-        drawDigit(bubbles, timeDigits[i], i, startDigitAt[i], sizeOfDigit)
-    }
+    timeDigits.forEach((digit, i) => {
+        drawDigit(bubbles, digit, i, startDigitAt[i], sizeOfDigit);
+    });
 }
 
 /**
@@ -269,19 +232,12 @@ const generateBubbles = () => {
         }
 
         bubbles.forEach((bubble) => {
-            ctx.lineWidth = params.lineWidth
-            if (time) {
-                centerAllBubble(bubble)
-            }   
-            else {
-                bubble.update(canvas, params.speed)
-            }
-            bubble.draw(ctx)
-        })
+            ctx.lineWidth = params.lineWidth;
+            time ? centerAllBubble(bubble) : bubble.update(canvas, params.speed);
+            bubble.draw(ctx);
+        });
 
-        if (time) {
-            timeCall(bubbles)
-        }
+        time && timeCall(bubbles);
 
         window.requestAnimationFrame(update)
     }
