@@ -2,16 +2,167 @@ import { GUI } from "dat.gui"
 
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d') // context type: https://developer.mozilla.org/fr/docs/Web/API/HTMLCanvasElement/getContext#typedecontexte
+let time = false;
+
+document.getElementById('timebtn').addEventListener('click', () => {
+    time = true;
+    setTimeout(() => {
+        time = false;
+    }, 10000);
+});
+
+function getTime() {
+    const currentTime = new Date();
+    const hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+    const timeArray = [hours, minutes];
+    const hourTens = Math.floor(timeArray[0] / 10);
+    const hourUnits = timeArray[0] % 10;
+    const minuteTens = Math.floor(timeArray[1] / 10);
+    const minuteUnits = timeArray[1] % 10;
+    const timeDigits = [hourTens, hourUnits, ':', minuteTens, minuteUnits];
+
+    return timeDigits;
+}
+
+function centerAllBubble(bubble) {
+    bubble.x += (canvas.width / 2 - bubble.x) * 0.05
+    bubble.y += (canvas.height / 2 - bubble.y) * 0.05
+}
+
+function GetPosition(size) {
+    const coordinates = [];
+
+    for (let i = 0; i < 5; i++) {
+        const n = i + 1;
+        coordinates.push({ x: (size.ecartTypeWidth * n) + (size.widthOfDigit * i), y: size.ecartTypeHeight });
+    }
+
+    return coordinates
+}
+
+function GetSizeOfDigit() {
+    let size = {};
+    const widthOfDigit = canvas.width * 0.15;
+    const ecartTypeWidth = (canvas.width - widthOfDigit * 5) / 6;
+    const heightOfDigit = canvas.height * 0.8;
+    const ecartTypeHeight = (canvas.height - heightOfDigit) / 2;
+
+    return size = { widthOfDigit, ecartTypeWidth, heightOfDigit, ecartTypeHeight }
+}
+
+function drawDigit(bubbles, digit, i, coo, sizeOfDigit) {
+    const startIndex = (i - 1) * 6;
+    const endIndex = i * 6;
+    const digitBubbles = bubbles.slice(startIndex, endIndex);
+
+    if (digit !== ':') {
+        const dotTop = new Bubble((canvas.width / 2), (canvas.height / 2 + 75), ctx, i + 1);
+        dotTop.draw(ctx);
+        const dotBottom = new Bubble((canvas.width / 2), (canvas.height / 2 - 75), ctx, i + 1);
+        dotBottom.draw(ctx);
+
+        for (let k = 0; k < 1.5; k += 0.5) {
+            const bubble = new Bubble(coo.x, coo.y + (sizeOfDigit.heightOfDigit * k), ctx, i + 1);
+            bubble.draw(ctx);
+            
+            if (k === 0.5 && (digit === 2 || digit === 3 || digit === 4 || digit === 5 || digit === 6 || digit === 8 || digit === 9)) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(bubble.x, bubble.y);
+                ctx.lineTo(bubble.x + sizeOfDigit.widthOfDigit, bubble.y);
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+            }
+
+            if (k === 0.5 && (digit === 0 || digit === 4 || digit === 5 || digit === 6 || digit === 8 || digit === 9)) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(bubble.x, bubble.y);
+                ctx.lineTo(bubble.x, bubble.y - sizeOfDigit.heightOfDigit / 2);
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+            }
+
+            if (k === 0.5 && (digit === 0 || digit === 2 || digit === 6 || digit === 8)) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(bubble.x, bubble.y);
+                ctx.lineTo(bubble.x, bubble.y + sizeOfDigit.heightOfDigit / 2);
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+            }
+
+            for (let l = 0; l < 2; l++) {
+                const bubble = new Bubble(coo.x + (sizeOfDigit.widthOfDigit * l), coo.y + (sizeOfDigit.heightOfDigit * k), ctx, i + 1);
+                bubble.draw(ctx);
+
+                if (l === 1 && k === 0 && (digit === 0 || digit === 2 || digit === 3 || digit === 5 || digit === 6 || digit === 7 || digit === 8 || digit === 9)) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(bubble.x, bubble.y);
+                    ctx.lineTo(bubble.x - sizeOfDigit.widthOfDigit, bubble.y);
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.restore();
+                }
+
+                if (l === 1 && k === 0 && (digit === 0 || digit === 1 || digit === 2 || digit === 3 || digit === 4 || digit === 7 || digit === 8 || digit === 9)) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(bubble.x, bubble.y);
+                    ctx.lineTo(bubble.x, bubble.y + sizeOfDigit.heightOfDigit / 2);
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.restore();
+                }
+
+                if (l === 1 && k === 1 && (digit === 0 || digit === 2 || digit === 3 || digit === 5 || digit === 6 || digit === 8 || digit === 9)) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(bubble.x, bubble.y);
+                    ctx.lineTo(bubble.x - sizeOfDigit.widthOfDigit, bubble.y);
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.restore();
+                }
+
+                if (l === 1 && k === 1 && (digit === 0 || digit === 1 || digit === 3 || digit === 4 || digit === 5 || digit === 6 || digit === 7 || digit === 8 || digit === 9)) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(bubble.x, bubble.y);
+                    ctx.lineTo(bubble.x, bubble.y - sizeOfDigit.heightOfDigit / 2);
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.restore();
+                }
+            }
+        }
+    }
+}
+
+function timeCall(bubbles) {
+    const timeDigits = getTime();
+    const sizeOfDigit = GetSizeOfDigit();
+    const startDigitAt = GetPosition(sizeOfDigit);
+
+    for (let i = 0; i < timeDigits.length; i++) {
+        drawDigit(bubbles, timeDigits[i], i, startDigitAt[i], sizeOfDigit)
+    }
+}
 
 /**
  *  CONFIG
  */
 const params = {
-    nBubbles: 4,
+    nBubbles: 24,
     speed: 1,
-    radius: 10,
+    radius: 3,
     lineWidth: 2,
-    threshold: 50
+    threshold: 200
 }
 const debug = new GUI() // create a debug GUI and add it to the DOM
 let guiFolder
@@ -33,9 +184,10 @@ const distance = (x1, y1, x2, y2) => {
  *  CLASSES
  */
 class Bubble {
-    constructor(x, y, context) {
+    constructor(x, y, context, id) {
         this.x = x
         this.y = y
+        this.id = id;
 
         // animation
         this.vx = Math.random() * 2 - 1 // [-1 : 1]
@@ -82,7 +234,8 @@ const generateBubbles = () => {
     for (let i = 0; i < params.nBubbles; i++) {
         const x_ = canvasWidth * Math.random()
         const y_ = canvasHeight * Math.random()
-        const bubble_ = new Bubble(x_, y_, ctx)
+        const id_ = i + 1
+        const bubble_ = new Bubble(x_, y_, ctx, id_)
         bubbles.push(bubble_)
     }
 
@@ -115,11 +268,21 @@ const generateBubbles = () => {
             }
         }
 
-        bubbles.forEach((b) => {
+        bubbles.forEach((bubble) => {
             ctx.lineWidth = params.lineWidth
-            b.update(canvas, params.speed)
-            b.draw(ctx)
+            if (time) {
+                centerAllBubble(bubble)
+            }   
+            else {
+                bubble.update(canvas, params.speed)
+            }
+            bubble.draw(ctx)
         })
+
+        if (time) {
+            timeCall(bubbles)
+        }
+
         window.requestAnimationFrame(update)
     }
     update()

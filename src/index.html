@@ -10,17 +10,34 @@
 
 <body>
     <div class="container">
-        <h1>Bouncing bubbles</h1>
+        <h1>7 Digits</h1>
+        <button id="timebtn">Give me the Time</button>
         <canvas id="canvas-bubbles" class="bubbles"></canvas>
     </div>
     <script type="module" src="./main.js"></script>
 </body>
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     h1 {
         text-align: center;
         text-transform: uppercase;
         font-family: Arial, Helvetica, sans-serif;
         font-style: italic;
+        margin: 10px 0;
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #f1f1f1;
+        cursor: pointer;
+        margin: 10px 0;
     }
 
     .container {
@@ -30,7 +47,7 @@
     }
 
     .bubbles {
-        width: 50vw;
+        width: 80vw;
         height: 80vh;
         border: solid;
     }
