@@ -8,7 +8,7 @@ document.getElementById('timebtn').addEventListener('click', () => {
     time = true;
     setTimeout(() => {
         time = false;
-    }, 10000);
+    }, params.timeVisibility);
 });
 
 function getTime() {
@@ -73,6 +73,10 @@ function drawDigit(bubbles, digit, i, coo, sizeOfDigit) {
                 drawLine(bubble.x, bubble.y, bubble.x, bubble.y + sizeOfDigit.heightOfDigit / 2);
             }
 
+            if (k === 0.5 && (digit === 1)) {
+                drawLine(bubble.x, bubble.y, bubble.x + sizeOfDigit.widthOfDigit, bubble.y - sizeOfDigit.heightOfDigit / 2);
+            }
+
             for (let l = 0; l < 2; l++) {
                 const bubble = new Bubble(coo.x + (sizeOfDigit.widthOfDigit * l), coo.y + (sizeOfDigit.heightOfDigit * k), ctx, i + 1);
                 bubble.draw(ctx);
@@ -125,7 +129,8 @@ const params = {
     speed: 1,
     radius: 3,
     lineWidth: 2,
-    threshold: 200
+    threshold: 200,
+    timeVisibility: 3000
 }
 const debug = new GUI() // create a debug GUI and add it to the DOM
 let guiFolder
@@ -252,6 +257,7 @@ guiFolder.add(params, 'speed', -10, 10, .1)
 guiFolder.add(params, 'radius', 0, 20, .1)
 guiFolder.add(params, 'lineWidth', 1, 10, .1)
 guiFolder.add(params, 'threshold', 0, canvas.width, 1)
+guiFolder.add(params, 'timeVisibility', 1000, 60000, 1)
 
 // Start
 generateBubbles()
